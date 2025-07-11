@@ -1192,5 +1192,53 @@
             showAdminControls();
         }
     </script>
+    <!-- Supabase JS Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+  // 🔐 Your Supabase credentials
+  const SUPABASE_URL = "https://tyrrcjheeuxzjkvqfoyo.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5cnJjamhlZXV4emprdnFmb3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNTY2ODIsImV4cCI6MjA2NzgzMjY4Mn0.6kjrOAXfg2uXDrTiwH1nlyKLKQPsHtjQsGZP706XDJU";
+
+  // 🚀 Connect to Supabase
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 🔄 Load blog posts from Supabase
+  async function loadPosts() {
+    const container = document.getElementById('blog-container');
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('date', { ascending: false });
+
+    if (error) {
+      container.innerHTML = "<p>Error loading posts.</p>";
+      console.error(error);
+      return;
+    }
+
+    if (posts.length === 0) {
+      container.innerHTML = "<p>No blog posts yet.</p>";
+      return;
+    }
+
+    container.innerHTML = ""; // Clear loading message
+
+    posts.forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'post';
+      div.innerHTML = `
+        <h2>${post.title}</h2>
+        <p><em>${new Date(post.date).toLocaleDateString()}</em></p>
+        <p>${post.content}</p>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // 📦 Run the function when the page loads
+  loadPosts();
+</script>
+
 </body>
 </html>
